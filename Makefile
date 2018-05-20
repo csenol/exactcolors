@@ -17,9 +17,9 @@
 # exactcolors requires one of the following 3 LP solvers: Gurobi, Cplex, or QSopt.
 # Please set the environment path and uncomment the lines correspondingly.
 # You might also need to adopt the  LPINCLUDE & LPLIB  paths further below.
-GUPATH=$(GUROBI_HOME)
+#GUPATH=$(GUROBI_HOME)
 CPLEXPATH=$(CPLEX_HOME)
-QSPATH=$(QSOPT_HOME)
+#QSPATH=$(QSOPT_HOME)
 
 ifneq ($(QSPATH),)
 LPINCLUDE=$(QSPATH)
@@ -97,28 +97,28 @@ clang: *.[hc] mwis_sewell/*.[hc]
 	scan-build -v -o clang make -j
 
 color: $(SEWELL_LIB) $(CBOSSFILES) color_worker
-	$(LD) $(CFLAGS) -o color $(CBOSSFILES) $(LPLIB) -lm -lpthread $(SEWELL_LDFLAG)
+	$(LD) $(CFLAGS) -o color $(CBOSSFILES) $(SEWELL_LDFLAG) $(LPLIB) -lm -lpthread -ldl
 
 color_worker: $(SEWELL_LIB) $(CWORKERFILES)
-	$(CC) $(CFLAGS) -o color_worker $(CWORKERFILES) $(LPLIB) -lm -lpthread $(SEWELL_LDFLAG)
+	$(CC) $(CFLAGS) -o color_worker $(CWORKERFILES) $(SEWELL_LDFLAG) $(LPLIB) -lm -lpthread -ldl
 
 color_jobkiller: $(SEWELL_LIB) $(CKILLERFILES)
-	$(CC) $(CFLAGS) -o color_jobkiller $(CKILLERFILES) $(LPLIB) -lm -lpthread $(SEWELL_LDFLAG)
+	$(CC) $(CFLAGS) -o color_jobkiller $(CKILLERFILES) $(SEWELL_LDFLAG) $(LPLIB) -lm -lpthread -ldl
 
 $(SEWELL_LIB): $(SEWELL_DIR)/*[hc] $(SEWELL_DIR)/Makefile
 	cd $(SEWELL_DIR) && $(MAKE)
 
 stable: $(STABFILES)
-	$(CC) $(CFLAGS) -o stable $(STABFILES) $(LPLIB) -lm -lpthread
+	$(CC) $(CFLAGS) -o stable $(STABFILES) $(LPLIB) -lm -lpthread -ldl
 
 stable_grdy: $(STABGRDYFILES)
-	$(CC) $(CFLAGS) -o stable_grdy $(STABGRDYFILES) $(LPLIB) -lm -lpthread
+	$(CC) $(CFLAGS) -o stable_grdy $(STABGRDYFILES) $(LPLIB) -lm -lpthread -ldl
 
 partition: $(SEWELL_LIB) $(PARTFILES)
-	$(CC) $(CFLAGS) -o partition $(PARTFILES) $(LPLIB) -lm -lpthread  $(SEWELL_LIB)
+	$(CC) $(CFLAGS) -o partition $(PARTFILES)  $(SEWELL_LIB) $(LPLIB) -lm -lpthread -ldl
 
 complement: $(SEWELL_LIB) $(COMPFILES)
-	$(CC) $(CFLAGS) -o complement $(COMPFILES) $(LPLIB) -lm -lpthread  $(SEWELL_LIB)
+	$(CC) $(CFLAGS) -o complement $(COMPFILES) $(SEWELL_LIB) $(LPLIB) -lm -lpthread -ldl
 
 
 queen: queen.c
